@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meteorologia Comunitat Valenciana</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="multimedia/logo.png">
+</head>
+<body>
+  <header>
+    <h1>Meteorologia a la Comunitat Valenciana</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">🏠 Inici</a>
+    <a href="avisos.html">⚠️ Avisos</a>
+    <a href="emergencies.html">🚨 Emergències</a>
+    <a href="radar.html">🌧️ Radar</a>
+    <a href="transit.html">🚗 Trànsit</a>
+    <a href="buscador.html" class="active">🔍 El teu poble</a>
+    <button id="theme-toggle" aria-label="Canvia el mode">🌓 Mode</button>
+  </nav>
+
+  <main class="container">
+    <div class="column">
+      <h2>Preemergències</h2>
+      <iframe src="https://umap.openstreetmap.fr/es/map/alertas-aemet_1165260?captionBar=false&captionMenus=true&datalayersControl=true&editMode=disabled&embedControl=null&miniMap=false&moreControl=true&onLoadPanel=none&scaleControl=false&scrollWheelZoom=true&searchControl=null&tilelayersControl=null&zoomControl=true#7/39.673/-0.258" loading="lazy" allowfullscreen></iframe>
+    </div>
+
+    <div class="column">
+      <h2>Emergències</h2>
+      <iframe src="https://wirenext.github.io/EmergenciasCV/" loading="lazy" allowfullscreen></iframe>
+    </div>
+
+    <div class="column">
+      <h2>Radar</h2>
+      <iframe 
+        src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=7&overlay=radar&product=radar&level=surface&lat=39.411&lon=-0.11&message=true" 
+        loading="lazy"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Meteorologia Comunitat Valenciana — Desenvolupat per WireNext</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

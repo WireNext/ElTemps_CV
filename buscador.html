@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Temps al teu poble</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="multimedia/logo.png">
+</head>
+<body>
+  <header>
+    <h1>El Temps al teu poble</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">🏠 Inici</a>
+    <a href="avisos.html">⚠️ Avisos</a>
+    <a href="emergencies.html">🚨 Emergències</a>
+    <a href="radar.html">🌧️ Radar</a>
+    <a href="transit.html">🚗 Trànsit</a>
+    <a href="buscador.html" class="active">🔍 El teu poble</a>
+    <button id="theme-toggle" aria-label="Canvia el mode">🌓 Mode</button>
+  </nav>
+
+  <main class="container" style="display: block; text-align: center;">
+    <h2>Consulta el temps al teu municipi</h2>
+
+    <div id="buscador-container">
+      <input 
+        type="text" 
+        id="buscador" 
+        placeholder="Escriu el teu poble..." 
+        list="municipios" 
+      >
+      <datalist id="municipios"></datalist>
+      <button onclick="buscarTiempo()">Cercar</button>
+    </div>
+
+    <div id="resultado-tiempo"></div>
+  </main>
+
+  <footer>
+    <p>© 2025 Meteorologia Comunitat Valenciana — Desenvolupat per WireNext</p>
+  </footer>
+
+  <script>
+  // Mapeo simple de códigos de tiempo de Open-Meteo a emojis
+  function obtenerIcono(code) {
+    if (code >= 0 && code <= 1) return "☀️"; // Despejado o casi
+    if (code >= 2 && code <= 3) return "🌤️"; // Parcialmente nublado
+    if (code >= 45 && code <= 48) return "🌫️"; // Niebla
+    if ((code >= 51 && code <= 55) || (code >= 61 && code <= 65) || (code >= 80 && code <= 82)) return "🌧️"; // Lluvia/Chubascos
+    if ((code >= 71 && code <= 75) || (code >= 85 && code <= 86)) return "❄️"; // Nieve
+    if (code >= 95 && code <= 99) return "🌩️"; // Tormenta
+    return "❓"; // Desconocido
+  }
+
+  // Carrega els municipis des del fitxer JSON
+  async function carregarMunicipis() {
+    try {
+      const resposta = await fetch("municipis.json");
+      const dades = await resposta.json();
+      const datalist = document.getElementById("municipios");
+
+      dades.municipis.forEach(m => {
+        const option = document.createElement("option");
+        option.value = m;
+        datalist.appendChild(option);
+      });
+    } catch (e) {
+      console.error("No s'ha pogut carregar la llista de municipis:", e);
+    }
+  }
+
+ // Busca el temps en el municipi indicat
+  async function buscarTiempo() {
+    const poble = document.getElementById("buscador").value.trim();
+    const resultat = document.getElementById("resultado-tiempo");
+
+    if (!poble) {
+      resultat.innerHTML = "<p>⚠️ Escriu un municipi per continuar.</p>";
+      return;
+    }
+
+    resultat.innerHTML = "⏳ Cercant dades meteorològiques...";
+
+    try {
+      // 1️⃣ Buscar coordenades (Búsqueda más flexible, sin añadir "Comunitat Valenciana")
+      // Usamos language=es para mejorar la tasa de acierto en nombres de ciudades principales
+      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=1&language=es`);
+      const geoData = await geoRes.json();
+
+      // VERIFICACIÓN CLAVE: Comprobar si hay resultados
+      if (!geoData.results || geoData.results.length === 0) {
+        // Falló la búsqueda geográfica
+        resultat.innerHTML = "❌ No s'ha trobat el municipi. Intenta amb el nom oficial en castellà (ex: 'Alicante' en lloc de 'Alacant').";
+        return;
+      }
+
+      // Filtrar para intentar forzar que sea de España (código 🇪🇸 = 275)
+      const resultatsEspanya = geoData.results.filter(r => r.country_code === 'ES' || r.country === 'Spain');
+      
+      let millorResultat;
+      if (resultatsEspanya.length > 0) {
+          // Si hi ha resultats d'Espanya, agafem el primer
+          millorResultat = resultatsEspanya[0];
+      } else {
+          // Si no hi ha resultats d'Espanya (o només hi ha un sense codi de país), agafem el primer
+          millorResultat = geoData.results[0];
+      }
+      
+      const { latitude, longitude, name, country } = millorResultat;
+
+      // 2️⃣ Consultar Open-Meteo
+      const meteoRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto`);
+      const meteoData = await meteoRes.json();
+      
+      // ... (El resto de la función es igual para mostrar el resultado)
+      const weather = meteoData.current_weather;
+      const icono = obtenerIcono(weather.weathercode);
+
+      // 3️⃣ Mostrar resultat amb format visual
+      resultat.innerHTML = `
+        <h3>${name} (${country})</h3>
+        <span class="weather-icon">${icono}</span>
+        <span class="temperature">${weather.temperature} °C</span>
+        <div class="details">
+          <p>💨 Vent: <strong>${weather.windspeed} km/h</strong></p>
+          <p>🌬️ Direcció: ${weather.winddirection}°</p>
+          <p>🕒 Observació: ${new Date(weather.time).toLocaleTimeString("ca-ES")}</p>
+        </div>
+      `;
+    } catch (error) {
+      console.error(error);
+      resultat.innerHTML = "⚠️ Error en obtenir les dades meteorològiques.";
+    }
+  }
+
+  // Carregar municipis en iniciar la pàgina
+  carregarMunicipis();
+  </script>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

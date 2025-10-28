@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergències - Meteorologia CV</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="multimedia/logo.png">
+</head>
+<body>
+  <header>
+    <h1>Mapa d’Avisos</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">🏠 Inici</a>
+    <a href="avisos.html">⚠️ Avisos</a>
+    <a href="emergencies.html">🚨 Emergències</a>
+    <a href="radar.html">🌧️ Radar</a>
+    <a href="transit.html">🚗 Trànsit</a>
+    <a href="buscador.html" class="active">🔍 El teu poble</a>
+    <button id="theme-toggle" aria-label="Canvia el mode">🌓 Mode</button>
+  </nav>
+
+  <main class="container">
+    <div class="column">
+      <iframe 
+        src="https://wirenext.github.io/EmergenciasCV/" 
+        loading="lazy" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Meteorologia Comunitat Valenciana — Desenvolupat per WireNext</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
