@@ -135,8 +135,7 @@
             <span class="weather-icon">${currentIcono}</span>
             <span class="temperature">${current.temperature} °C</span>
             <div class="details">
-                <p>Mínima Avui: <strong>${daily.temperature_2m_min[0]} °C</strong></p>
-                <p>Màxima Avui: <strong>${daily.temperature_2m_max[0]} °C</strong></p>
+                <p><strong>${daily.temperature_2m_min[0]} °C /</strong> <strong>${daily.temperature_2m_max[0]} °C</strong></p>
                 <p>💨 Vent: ${current.windspeed} km/h</p>
                 <p>🕒 Observació: ${new Date(current.time).toLocaleTimeString("ca-ES")}</p>
             </div>
@@ -161,7 +160,7 @@
             <p class="dia-setmana">${dia}</p>
             <span class="previsio-icon">${iconoDia}</span>
             <p class="temp-range">
-              <span class="max-temp">${maxTemp}°</span> / <span class="min-temp">${minTemp}°</span>
+              <span class="max-temp">${maxTemp}°</span> <br> <span class="min-temp">${minTemp}°</span>
             </p>
           </div>
         `;
