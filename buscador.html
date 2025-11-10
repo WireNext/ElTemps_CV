@@ -55,7 +55,23 @@
     return "❓"; // Desconocido
   }
 
-  // Carrega els municipis des del fitxer JSON
+  // Genera el nombre del día de la semana
+  function obtenerDiaSemana(dateString) {
+    // Para el día actual, mostraremos 'Avui', si no, el nombre corto.
+    const date = new Date(dateString);
+    const avui = new Date();
+    
+    // Si la fecha coincide con el día de hoy, retornamos 'Avui' (Hoy)
+    if (date.toDateString() === avui.toDateString()) {
+        return "Avui";
+    }
+    
+    // Si no es hoy, retornamos el nombre corto (Lun, Mar, etc.)
+    const options = { weekday: 'short', day: 'numeric' };
+    return date.toLocaleDateString("ca-ES", options);
+  }
+
+  // Carrega els municipis (mantener esta función intacta)
   async function carregarMunicipis() {
     try {
       const resposta = await fetch("municipis.json");
@@ -72,7 +88,7 @@
     }
   }
 
- // Busca el temps en el municipi indicat
+  // Busca el temps i la previsió
   async function buscarTiempo() {
     const poble = document.getElementById("buscador").value.trim();
     const resultat = document.getElementById("resultado-tiempo");
@@ -85,51 +101,75 @@
     resultat.innerHTML = "⏳ Cercant dades meteorològiques...";
 
     try {
-      // 1️⃣ Buscar coordenades (Búsqueda más flexible, sin añadir "Comunitat Valenciana")
-      // Usamos language=es para mejorar la tasa de acierto en nombres de ciudades principales
+      // 1️⃣ Buscar coordenades (Búsqueda flexible)
       const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=1&language=es`);
       const geoData = await geoRes.json();
 
-      // VERIFICACIÓN CLAVE: Comprobar si hay resultados
       if (!geoData.results || geoData.results.length === 0) {
-        // Falló la búsqueda geográfica
-        resultat.innerHTML = "❌ No s'ha trobat el municipi. Intenta amb el nom oficial en castellà (ex: 'Alicante' en lloc de 'Alacant').";
+        resultat.innerHTML = "❌ No s'ha trobat el municipi. Intenta amb el nom oficial en castellà.";
         return;
       }
 
-      // Filtrar para intentar forzar que sea de España (código 🇪🇸 = 275)
       const resultatsEspanya = geoData.results.filter(r => r.country_code === 'ES' || r.country === 'Spain');
-      
-      let millorResultat;
-      if (resultatsEspanya.length > 0) {
-          // Si hi ha resultats d'Espanya, agafem el primer
-          millorResultat = resultatsEspanya[0];
-      } else {
-          // Si no hi ha resultats d'Espanya (o només hi ha un sense codi de país), agafem el primer
-          millorResultat = geoData.results[0];
-      }
+      const millorResultat = resultatsEspanya.length > 0 ? resultatsEspanya[0] : geoData.results[0];
       
       const { latitude, longitude, name, country } = millorResultat;
 
-      // 2️⃣ Consultar Open-Meteo
-      const meteoRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto`);
+      // 2️⃣ Consultar Open-Meteo per a la previsió de 7 dies i temps actual
+      // Se añaden los parámetros 'daily' para obtener la previsión
+      const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max,winddirection_10m_dominant`;
+      const meteoRes = await fetch(meteoUrl);
       const meteoData = await meteoRes.json();
-      
-      // ... (El resto de la función es igual para mostrar el resultado)
-      const weather = meteoData.current_weather;
-      const icono = obtenerIcono(weather.weathercode);
 
-      // 3️⃣ Mostrar resultat amb format visual
-      resultat.innerHTML = `
-        <h3>${name} (${country})</h3>
-        <span class="weather-icon">${icono}</span>
-        <span class="temperature">${weather.temperature} °C</span>
-        <div class="details">
-          <p>💨 Vent: <strong>${weather.windspeed} km/h</strong></p>
-          <p>🌬️ Direcció: ${weather.winddirection}°</p>
-          <p>🕒 Observació: ${new Date(weather.time).toLocaleTimeString("ca-ES")}</p>
+      const current = meteoData.current_weather;
+      const daily = meteoData.daily;
+      const currentIcono = obtenerIcono(current.weathercode);
+
+      // Iniciar el HTML del resultado
+      let htmlResultat = `<h3>${name} (${country})</h3>`;
+      
+      // --- BLOQUE 1: Temps Actual (amb Max/Min del dia) ---
+      htmlResultat += `
+        <h4>Temps Actual</h4>
+        <div id="temps-actual-card">
+            <span class="weather-icon">${currentIcono}</span>
+            <span class="temperature">${current.temperature} °C</span>
+            <div class="details">
+                <p>Mínima Avui: <strong>${daily.temperature_2m_min[0]} °C</strong></p>
+                <p>Màxima Avui: <strong>${daily.temperature_2m_max[0]} °C</strong></p>
+                <p>💨 Vent: ${current.windspeed} km/h</p>
+                <p>🕒 Observació: ${new Date(current.time).toLocaleTimeString("ca-ES")}</p>
+            </div>
         </div>
       `;
+
+      // --- BLOQUE 2: Previsió 7 Dies ---
+      htmlResultat += `
+        <h4>Previsió 7 Dies</h4>
+        <div id="previsio-7dies-container">
+      `;
+
+      // Recorrer los 7 días (0 a 6)
+      for (let i = 0; i < 7; i++) {
+        const dia = obtenerDiaSemana(daily.time[i]);
+        const maxTemp = daily.temperature_2m_max[i];
+        const minTemp = daily.temperature_2m_min[i];
+        const iconoDia = obtenerIcono(daily.weathercode[i]);
+        
+        htmlResultat += `
+          <div class="previsio-dia">
+            <p class="dia-setmana">${dia}</p>
+            <span class="previsio-icon">${iconoDia}</span>
+            <p class="temp-range">
+              <span class="max-temp">${maxTemp}°</span> / <span class="min-temp">${minTemp}°</span>
+            </p>
+          </div>
+        `;
+      }
+
+      htmlResultat += `</div>`; // Tancar #previsio-7dies-container
+      resultat.innerHTML = htmlResultat;
+
     } catch (error) {
       console.error(error);
       resultat.innerHTML = "⚠️ Error en obtenir les dades meteorològiques.";

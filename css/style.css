@@ -224,3 +224,87 @@ footer {
 .details p:last-child {
     border-bottom: none;
 }
+
+#temps-actual-card {
+  /* Separación del bloque de 7 días */
+  padding-bottom: 2rem; 
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--nav-bg);
+}
+
+/* ======== Estilos para la Previsión de 7 Días (Optimizado) ======== */
+
+#previsio-7dies-container {
+  display: flex;
+  flex-wrap: wrap; /* Permite saltar en móviles */
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+  max-width: 800px; /* Limita el ancho del contenedor en desktop */
+  margin: 0 auto; /* Centra el contenedor en desktop */
+}
+
+.previsio-dia {
+  background: var(--nav-bg);
+  border-radius: 8px;
+  padding: 10px 5px; 
+  min-width: 85px; 
+  max-width: 120px; 
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  /* El flex-basis se calcula en la media query de desktop */
+}
+
+.previsio-dia:hover {
+    transform: translateY(-3px);
+}
+
+.dia-setmana {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.previsio-icon {
+  font-size: 2rem;
+  display: block;
+  margin: 5px 0;
+}
+
+.temp-range {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.max-temp {
+  color: #d62828;
+  font-weight: 600;
+}
+
+.min-temp {
+  color: #0077b6;
+}
+
+
+/* --- Media Query para DESKTOP (pantallas grandes: vista horizontal) --- */
+@media (min-width: 900px) {
+  #previsio-7dies-container {
+    flex-wrap: nowrap; /* 🔥 FUERZA la vista en una sola línea */
+  }
+  
+  .previsio-dia {
+    /* Calcula el ancho para que los 7 días quepan en una fila, restando el espacio del gap */
+    flex-basis: calc(100% / 7 - 10px); 
+    width: auto; 
+    max-width: none;
+    min-width: 0;
+  }
+}
+
+/* Ajuste para móvil: hacer los días más pequeños */
+@media (max-width: 600px) {
+  .previsio-dia {
+    width: 70px; 
+  }
+}
