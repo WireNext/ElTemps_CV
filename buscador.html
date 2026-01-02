@@ -8,6 +8,7 @@
   <link rel="icon" href="multimedia/logo.png">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8789822435662410"
      crossorigin="anonymous"></script>
+<<<<<<< HEAD
   <style>
     /* Estils per al lliscable de les pròximes 24 hores */
     #proximas-horas-container {
@@ -39,6 +40,8 @@
     #proximas-horas-container::-webkit-scrollbar { height: 6px; }
     #proximas-horas-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
   </style>
+=======
+>>>>>>> d6cdd1054b4bbbeeca158fedbd047ff00e5a4eb6
 </head>
 <body>
   <header>
@@ -129,6 +132,10 @@
     resultat.innerHTML = "⏳ Cercant dades meteorològiques...";
 
     try {
+<<<<<<< HEAD
+=======
+      // Millora: Búsqueda flexible centrada en Espanya per evitar resultats internacionals
+>>>>>>> d6cdd1054b4bbbeeca158fedbd047ff00e5a4eb6
       const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=5&language=ca`);
       const geoData = await geoRes.json();
 
@@ -137,6 +144,10 @@
         return;
       }
 
+<<<<<<< HEAD
+=======
+      // Prioritzem el primer resultat que siga d'Espanya
+>>>>>>> d6cdd1054b4bbbeeca158fedbd047ff00e5a4eb6
       const m = geoData.results.find(r => r.country_code === 'ES') || geoData.results[0];
       consultarMeteo(m.latitude, m.longitude, m.name);
 
@@ -148,18 +159,30 @@
   async function consultarMeteo(lat, lon, nombre) {
     const resultat = document.getElementById("resultado-tiempo");
     try {
+<<<<<<< HEAD
       // Hem afegit 'hourly=temperature_2m,weather_code' a la consulta
       const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto`;
+=======
+      // Obtenció de dades detallades: sensació, humitat, índex UV i pluja
+      const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto`;
+>>>>>>> d6cdd1054b4bbbeeca158fedbd047ff00e5a4eb6
       const meteoRes = await fetch(meteoUrl);
       const meteoData = await meteoRes.json();
 
       const current = meteoData.current;
+<<<<<<< HEAD
       const hourly = meteoData.hourly;
+=======
+>>>>>>> d6cdd1054b4bbbeeca158fedbd047ff00e5a4eb6
       const daily = meteoData.daily;
 
       let htmlResultat = `<h3>${nombre}</h3>`;
       
+<<<<<<< HEAD
       // Temps Actual
+=======
+      // Temps Actual amb dades arrodonides
+>>>>>>> d6cdd1054b4bbbeeca158fedbd047ff00e5a4eb6
       htmlResultat += `
         <h4>Temps Actual</h4>
         <div id="temps-actual-card">
@@ -174,6 +197,7 @@
         </div>
       `;
 
+<<<<<<< HEAD
       // NOU: Pròximes 24 hores (Lliscable)
       htmlResultat += `<h4>Pròximes 24 hores</h4><div id="proximas-horas-container">`;
       
@@ -198,6 +222,8 @@
       htmlResultat += `</div>`;
 
       // Previsió 7 Dies
+=======
+>>>>>>> d6cdd1054b4bbbeeca158fedbd047ff00e5a4eb6
       htmlResultat += `
         <h4>Previsió 7 Dies</h4>
         <div id="previsio-7dies-container">
