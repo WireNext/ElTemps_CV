@@ -121,3 +121,190 @@ footer {
     height: 400px;
   }
 }
+
+#buscador-container {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  text-align: center;
+  transition: background 0.4s, color 0.4s;
+}
+
+#buscador-container input {
+  width: 70%;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 2px solid var(--accent);
+  outline: none;
+  transition: border 0.3s;
+  color: var(--text-color);
+  background: var(--bg-color);
+}
+
+#buscador-container input:focus {
+  border-color: #0096c7;
+}
+
+#buscador-container button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  margin-left: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+}
+
+#buscador-container button:hover {
+  background: #0096c7;
+  transform: scale(1.05);
+}
+
+#resultado-tiempo {
+  margin-top: 2rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: background 0.4s, color 0.4s;
+}
+
+#resultado-tiempo h3 {
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+#resultado-tiempo {
+    /* Mantenemos el estilo de la tarjeta principal */
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra un poco más fuerte */
+    padding: 2rem 1.5rem; /* Más espacio */
+    max-width: 320px; /* Reducir un poco el tamaño */
+    margin: 2rem auto;
+    text-align: center;
+    transition: background 0.4s, color 0.4s;
+    border-top: 5px solid var(--accent); /* Línea de color para destacar */
+}
+
+#resultado-tiempo h3 {
+    color: var(--text-color); /* Color del texto normal */
+    margin-bottom: 0.5rem;
+}
+
+.weather-icon {
+    font-size: 4rem; /* Icono grande */
+    margin: 0.5rem 0;
+    color: var(--accent); /* Color del icono */
+    display: block; /* Aseguramos que esté en su propia línea */
+}
+
+.temperature {
+    font-size: 3rem; /* Temperatura muy destacada */
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.details p {
+    margin: 0.4rem 0;
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed var(--nav-bg); /* Separador sutil */
+}
+
+.details p:last-child {
+    border-bottom: none;
+}
+
+#temps-actual-card {
+  /* Separación del bloque de 7 días */
+  padding-bottom: 2rem; 
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--nav-bg);
+}
+
+/* ======== Estilos para la Previsión de 7 Días (Optimizado) ======== */
+
+#previsio-7dies-container {
+  display: flex;
+  flex-wrap: wrap; /* Permite saltar en móviles */
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+  max-width: 800px; /* Limita el ancho del contenedor en desktop */
+  margin: 0 auto; /* Centra el contenedor en desktop */
+}
+
+.previsio-dia {
+  background: var(--nav-bg);
+  border-radius: 8px;
+  padding: 10px 5px; 
+  min-width: 85px; 
+  max-width: 120px; 
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  /* El flex-basis se calcula en la media query de desktop */
+}
+
+.previsio-dia:hover {
+    transform: translateY(-3px);
+}
+
+.dia-setmana {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.previsio-icon {
+  font-size: 2rem;
+  display: block;
+  margin: 5px 0;
+}
+
+.temp-range {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.max-temp {
+  color: #d62828;
+  font-weight: 600;
+}
+
+.min-temp {
+  color: #0077b6;
+}
+
+
+/* --- Media Query para DESKTOP (pantallas grandes: vista horizontal) --- */
+@media (min-width: 900px) {
+  #previsio-7dies-container {
+    flex-wrap: nowrap; /* 🔥 FUERZA la vista en una sola línea */
+  }
+  
+  .previsio-dia {
+    /* Calcula el ancho para que los 7 días quepan en una fila, restando el espacio del gap */
+    flex-basis: calc(100% / 7 - 10px); 
+    width: auto; 
+    max-width: none;
+    min-width: 0;
+  }
+}
+
+/* Ajuste para móvil: hacer los días más pequeños */
+@media (max-width: 600px) {
+  .previsio-dia {
+    width: 70px; 
+  }
+}
