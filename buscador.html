@@ -9,7 +9,6 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8789822435662410"
      crossorigin="anonymous"></script>
   <style>
-    /* Estils per al lliscable de les pròximes 24 hores */
     #proximas-horas-container {
       display: flex;
       overflow-x: auto;
@@ -20,7 +19,6 @@
       scrollbar-color: var(--accent) transparent;
       -webkit-overflow-scrolling: touch;
     }
-
     .hora-item {
       min-width: 75px;
       background: rgba(255, 255, 255, 0.05);
@@ -30,12 +28,9 @@
       flex-shrink: 0;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .hora-txt { font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 5px; }
     .hora-icon { font-size: 1.5em; display: block; margin: 5px 0; }
     .hora-temp { font-size: 1.1em; font-weight: bold; color: var(--accent); }
-
-    /* Estètica de la barra de desplaçament */
     #proximas-horas-container::-webkit-scrollbar { height: 6px; }
     #proximas-horas-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
   </style>
@@ -77,7 +72,6 @@
   </footer>
 
   <script>
-  // Escolta la tecla Enter en l'input per a major comoditat
   document.getElementById("buscador").addEventListener("keypress", function(e) {
     if (e.key === "Enter") {
       buscarTiempo();
@@ -112,6 +106,13 @@
         option.value = m;
         datalist.appendChild(option);
       });
+      
+      // DESPRÉS DE CARREGAR MUNICIPIS, comprovem si n'hi ha un guardat en caché
+      const pobleGuardat = localStorage.getItem("ultimPobleBuscat");
+      if (pobleGuardat) {
+        document.getElementById("buscador").value = pobleGuardat;
+        buscarTiempo(); // Cerca automàtica
+      }
     } catch (e) {
       console.error("No s'ha pogut carregar la llista de municipis:", e);
     }
@@ -138,6 +139,10 @@
       }
 
       const m = geoData.results.find(r => r.country_code === 'ES') || geoData.results[0];
+      
+      // GUARDAR EN CACHÉ: Guardem el nom del municipi trobat amb èxit
+      localStorage.setItem("ultimPobleBuscat", m.name);
+      
       consultarMeteo(m.latitude, m.longitude, m.name);
 
     } catch (error) {
@@ -148,7 +153,6 @@
   async function consultarMeteo(lat, lon, nombre) {
     const resultat = document.getElementById("resultado-tiempo");
     try {
-      // Hem afegit 'hourly=temperature_2m,weather_code' a la consulta
       const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto`;
       const meteoRes = await fetch(meteoUrl);
       const meteoData = await meteoRes.json();
@@ -159,7 +163,6 @@
 
       let htmlResultat = `<h3>${nombre}</h3>`;
       
-      // Temps Actual
       htmlResultat += `
         <h4>Temps Actual</h4>
         <div id="temps-actual-card">
@@ -174,13 +177,11 @@
         </div>
       `;
 
-      // NOU: Pròximes 24 hores (Lliscable)
       htmlResultat += `<h4>Pròximes 24 hores</h4><div id="proximas-horas-container">`;
       
       const ara = new Date();
       const horaActual = ara.getHours();
       
-      // Iterem per a les pròximes 24 hores des de l'actual
       for (let i = horaActual; i < horaActual + 24; i++) {
         const hData = new Date(hourly.time[i]);
         const horaTitol = hData.getHours() + ":00";
@@ -197,7 +198,6 @@
       }
       htmlResultat += `</div>`;
 
-      // Previsió 7 Dies
       htmlResultat += `
         <h4>Previsió 7 Dies</h4>
         <div id="previsio-7dies-container">
