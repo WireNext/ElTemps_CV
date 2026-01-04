@@ -1,4 +1,4 @@
-/* Tu Estilo Base */
+/* --- Variables Originales --- */
 :root {
   --bg-color: #e9f4ff;
   --text-color: #023047;
@@ -21,29 +21,38 @@
   --footer-bg: #003459;
 }
 
+/* --- Base y Centrado --- */
 body {
   font-family: "Segoe UI", Roboto, sans-serif;
   margin: 0;
   background: var(--bg-color);
   color: var(--text-color);
   transition: background 0.4s, color 0.4s;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra el contenido horizontalmente */
+}
+
+header, nav, footer, .container, main {
+  width: 100%;
+  max-width: 1200px; /* Evita que se estire demasiado en pantallas gigantes */
+  box-sizing: border-box;
 }
 
 header {
   background: var(--header-bg);
   color: white;
-  padding: 1rem 2rem;
+  padding: 1.5rem;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  max-width: 100%; /* El header sí ocupa todo el ancho */
 }
 
 nav {
   display: flex;
   justify-content: center;
-  align-items: center;
   background: var(--nav-bg);
   flex-wrap: wrap;
-  gap: 0.5rem;
+  max-width: 100%;
 }
 
 nav a {
@@ -51,86 +60,62 @@ nav a {
   color: var(--text-color);
   text-decoration: none;
   font-weight: 600;
-  transition: background 0.3s;
 }
 
-nav a:hover, nav a.active { background: var(--nav-hover); }
-
-#theme-toggle {
-  border: none;
-  background: var(--accent);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
+/* --- Grid de Contenido --- */
 .container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  margin: 0 auto;
 }
 
 .column {
   background: var(--card-bg);
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-.column h2 {
-  background: var(--accent);
-  color: white;
-  padding: 0.8rem;
-  margin: 0;
-  text-align: center;
-}
-
-iframe { flex-grow: 1; width: 100%; height: 700px; border: none; }
-
-/* NUEVOS ESTILOS PARA LAS 24 HORAS (Adaptados a tu estilo) */
+/* --- Slider de 24 Horas (CORREGIDO MODO OSCURO) --- */
 #proximas-horas-container {
   display: flex;
   overflow-x: auto;
   gap: 12px;
-  padding: 15px 5px;
-  margin: 15px 0;
-  -webkit-overflow-scrolling: touch;
+  padding: 15px;
+  margin: 10px 0;
+  background: var(--bg-color); /* Color de fondo de la web para contraste */
+  border-radius: 15px;
 }
 
 .hora-item {
   min-width: 80px;
-  background: var(--nav-bg); /* Usamos tu color de navegación */
+  background: var(--card-bg); /* Fondo de tarjeta para que destaque */
+  color: var(--text-color);
   padding: 12px 8px;
   border-radius: 12px;
   text-align: center;
   flex: 0 0 auto;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  border: 1px solid var(--nav-hover); /* Borde sutil */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .hora-temp { font-weight: bold; color: var(--accent); }
 
-/* ESTILOS 7 DÍAS */
+/* --- 7 Días --- */
 #previsio-7dies-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 10px;
+  padding: 10px;
 }
 
 .previsio-dia {
   background: var(--nav-bg);
-  border-radius: 8px;
-  padding: 10px 5px;
-  min-width: 85px;
+  padding: 10px;
+  border-radius: 10px;
   text-align: center;
 }
-
-.max-temp { color: #d62828; font-weight: 600; }
-.min-temp { color: #0077b6; }
-
-footer { background: var(--footer-bg); color: white; text-align: center; padding: 1rem; margin-top: 1rem; }
