@@ -1,99 +1,90 @@
-// --- 1. Modo oscuro automático + manual ---
+// --- 1. Gestión de Modo Oscuro ---
 const toggleBtn = document.getElementById("theme-toggle");
-const userPref = localStorage.getItem("theme");
-const systemPrefDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+const currentTheme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 
-if (userPref === "dark" || (!userPref && systemPrefDark)) {
-    document.documentElement.setAttribute("data-theme", "dark");
-}
+document.documentElement.setAttribute("data-theme", currentTheme);
 
 if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
-        const currentTheme = document.documentElement.getAttribute("data-theme");
-        const newTheme = currentTheme === "dark" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
+        const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
     });
 }
 
-// --- 2. Lógica de Predicción (Compartida) ---
-
+// --- 2. Lógica Meteorológica Centralizada ---
 document.addEventListener("DOMContentLoaded", () => {
-    const homeContainer = document.getElementById("tiempo-home-container");
+    const homeContainer = document.getElementById("resultado-tiempo-home");
     const pobleGuardat = localStorage.getItem("ultimPobleBuscat");
 
-    // Si estamos en la Home y hay un pueblo guardado, cargamos el tiempo
-    if (homeContainer && pobleGuardat) {
-        homeContainer.style.display = "block";
-        buscarTiempo(pobleGuardat, "resultado-tiempo-home");
+    if (homeContainer) {
+        if (pobleGuardat) {
+            buscarTiempo(pobleGuardat, "resultado-tiempo-home");
+        } else {
+            homeContainer.innerHTML = `
+                <div style="padding: 30px; text-align: center;">
+                    <p style="font-size: 1.2em;">📍 No has seleccionat cap poble encara.</p>
+                    <p style="opacity: 0.7;">Configura el teu municipi per a veure el temps ací.</p>
+                    <a href="buscador.html" class="btn-home">Configurar ara</a>
+                </div>`;
+        }
     }
 });
 
 function obtenerIcono(code) {
-    if (code >= 0 && code <= 1) return "☀️"; 
-    if (code >= 2 && code <= 3) return "🌤️"; 
-    if (code >= 45 && code <= 48) return "🌫️"; 
-    if ((code >= 51 && code <= 55) || (code >= 61 && code <= 65) || (code >= 80 && code <= 82)) return "🌧️"; 
-    if ((code >= 71 && code <= 75) || (code >= 85 && code <= 86)) return "❄️"; 
-    if (code >= 95 && code <= 99) return "🌩️"; 
-    return "❓"; 
-}
-
-function obtenerDiaSemana(dateString) {
-    const date = new Date(dateString);
-    const avui = new Date();
-    if (date.toDateString() === avui.toDateString()) return "Avui";
-    return date.toLocaleDateString("ca-ES", { weekday: 'short', day: 'numeric' });
+    if (code <= 1) return "☀️";
+    if (code <= 3) return "🌤️";
+    if (code <= 48) return "🌫️";
+    if (code <= 65 || (code >= 80 && code <= 82)) return "🌧️";
+    if (code <= 77 || (code >= 85 && code <= 86)) return "❄️";
+    if (code >= 95) return "🌩️";
+    return "❓";
 }
 
 async function buscarTiempo(poble, targetId) {
-    const resultat = document.getElementById(targetId);
-    if (!resultat) return;
+    const container = document.getElementById(targetId);
+    if (!container) return;
+    if (targetId === "resultado-tiempo") container.innerHTML = "⏳ Carregant previsió detallada...";
 
     try {
-        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=1&language=ca`);
-        const geoData = await geoRes.json();
-
-        if (geoData.results && geoData.results.length > 0) {
-            const m = geoData.results[0];
-            const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${m.latitude}&longitude=${m.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto`;
-            
-            const meteoRes = await fetch(meteoUrl);
-            const data = await meteoRes.json();
-
-            renderizarTiempo(data, m.name, targetId);
+        const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=1&language=ca`);
+        const geoData = await geo.json();
+        
+        if (!geoData.results) {
+            container.innerHTML = "❌ No s'ha trobat el municipi.";
+            return;
         }
-    } catch (error) {
-        console.error("Error:", error);
+
+        const m = geoData.results[0];
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${m.latitude}&longitude=${m.longitude}&current=temperature_2m,weather_code,apparent_temperature,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`);
+        const data = await res.json();
+        
+        renderizarTiempo(data, m.name, targetId);
+    } catch (e) {
+        container.innerHTML = "⚠️ Error de connexió.";
     }
 }
 
-function renderizarTiempo(meteoData, nombre, targetId) {
+function renderizarTiempo(data, nombre, targetId) {
     const container = document.getElementById(targetId);
-    if (!container) return;
+    const { current, hourly, daily } = data;
 
-    const current = meteoData.current;
-    const daily = meteoData.daily;
-    const hourly = meteoData.hourly;
-
-    // Parte común: Tiempo Actual
+    // --- Vista COMÚN (Tarjeta Principal) ---
     let html = `
-        <div id="temps-actual-card" style="margin-top:0;">
-            <h3>${nombre}</h3>
-            <span class="weather-icon">${obtenerIcono(current.weather_code)}</span>
-            <span class="temperature">${Math.round(current.temperature_2m)} °C</span>
-            <div class="details">
-                <p>🌡️ Sensació: <strong>${Math.round(current.apparent_temperature)} °C</strong> | 💨 Vent: <strong>${Math.round(current.wind_speed_10m)} km/h</strong></p>
-            </div>
-        </div>
-    `;
+        <div id="temps-actual-card" style="margin-bottom: 20px;">
+            <h2 style="margin: 0;">${nombre}</h2>
+            <span style="font-size: 4rem; display: block; margin: 10px 0;">${obtenerIcono(current.weather_code)}</span>
+            <span style="font-size: 2.5rem; font-weight: bold;">${Math.round(current.temperature_2m)}°C</span>
+            <p style="opacity: 0.9;">Sensació: ${Math.round(current.apparent_temperature)}°C | Vent: ${Math.round(current.wind_speed_10m)} km/h</p>
+        </div>`;
 
-    // Si es la página de BUSCADOR, añadimos el detalle de horas y días
+    // --- Vista DETALLADA (Solo para la página del buscador) ---
     if (targetId === "resultado-tiempo") {
-        // Próximas Horas
-        html += `<h4>Pròximes 24 hores</h4><div id="proximas-horas-container">`;
-        const horaActual = new Date().getHours();
-        for (let i = horaActual; i < horaActual + 24; i++) {
+        // Horas
+        html += `<h3 style="text-align:left; margin-left:10px;">Pròximes 24 hores</h3>
+                 <div id="proximas-horas-container">`;
+        const actual = new Date().getHours();
+        for (let i = actual; i < actual + 24; i++) {
             html += `
                 <div class="hora-item">
                     <span class="hora-txt">${i % 24}:00</span>
@@ -104,21 +95,20 @@ function renderizarTiempo(meteoData, nombre, targetId) {
         html += `</div>`;
 
         // 7 Días
-        html += `<h4>Previsió 7 Dies</h4><div id="previsio-7dies-container">`;
+        html += `<h3 style="text-align:left; margin-left:10px;">Previsió setmanal</h3>
+                 <div id="previsio-7dies-container">`;
         for (let i = 0; i < 7; i++) {
+            const fecha = new Date(daily.time[i]).toLocaleDateString("ca", { weekday: 'short', day: 'numeric' });
             html += `
                 <div class="previsio-dia">
-                    <p class="dia-setmana">${obtenerDiaSemana(daily.time[i])}</p>
-                    <span class="previsio-icon">${obtenerIcono(daily.weather_code[i])}</span>
-                    <p class="temp-range">
-                        <span class="max-temp">${Math.round(daily.temperature_2m_max[i])}°</span><br>
-                        <span class="min-temp">${Math.round(daily.temperature_2m_min[i])}°</span>
-                    </p>
-                    <p style="font-size: 0.75rem; color: var(--accent);">💧 ${daily.precipitation_probability_max[i]}%</p>
+                    <span style="font-weight:bold; text-transform: capitalize;">${fecha}</span>
+                    <span style="font-size: 2em; display:block; margin: 10px 0;">${obtenerIcono(daily.weather_code[i])}</span>
+                    <span style="color: var(--accent); font-weight:bold;">${Math.round(daily.temperature_2m_max[i])}°</span> 
+                    <span style="opacity:0.6;">${Math.round(daily.temperature_2m_min[i])}°</span>
+                    <p style="font-size: 0.8em; margin-top: 10px;">💧 ${daily.precipitation_probability_max[i]}%</p>
                 </div>`;
         }
         html += `</div>`;
     }
-
     container.innerHTML = html;
 }

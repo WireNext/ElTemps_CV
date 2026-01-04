@@ -6,12 +6,9 @@
   <title>Meteo Comunitat Valenciana</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="multimedia/logo.png">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8789822435662410" crossorigin="anonymous"></script>
 </head>
 <body>
-  <header>
-    <h1>Meteorologia a la Comunitat Valenciana</h1>
-  </header>
+  <header><h1>Meteorologia Comunitat Valenciana</h1></header>
 
   <nav>
     <a href="index.html">🏠 Inici</a>
@@ -20,39 +17,29 @@
     <a href="radar.html">🌧️ Radar</a>
     <a href="transit.html">🚗 Trànsit</a>
     <a href="buscador.html">🔍 El teu poble</a>
-    <button id="theme-toggle" aria-label="Canvia el mode">🌓 Mode</button>
+    <button id="theme-toggle">🌓 Mode</button>
   </nav>
 
   <main class="container">
-    <div id="tiempo-home-container" style="display: none; width: 100%; grid-column: 1 / -1; margin-bottom: 20px;">
-      <div class="column" style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; text-align: center;">
+    <section id="tiempo-local-home" class="column" style="grid-column: 1 / -1; background: var(--card-bg); border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
         <div id="resultado-tiempo-home"></div>
-        <p style="margin-top: 10px;"><a href="buscador.html" style="text-decoration: none; font-size: 0.9em; color: var(--accent);">⚙️ Canviar municipi</a></p>
-      </div>
+    </section>
+
+    <div class="column">
+      <h2>Avisos AEMET</h2>
+      <iframe src="https://wirenext.github.io/AlertasAemet/" loading="lazy"></iframe>
     </div>
 
     <div class="column">
-      <h2>Avisos</h2>
-      <iframe src="https://wirenext.github.io/AlertasAemet/" loading="lazy" allowfullscreen></iframe>
-      <p style="text-align: center; margin-top: 10px; font-size: 0.8em; opacity: 0.7;">Font: AEMET</p>
+      <h2>Radar de Pluja</h2>
+      <iframe src="https://embed.windy.com/embed.html?type=map&location=coordinates&zoom=7&overlay=radar&product=radar&lat=39.4&lon=-0.4" loading="lazy"></iframe>
     </div>
 
     <div class="column">
-      <h2>Radar</h2>
-      <iframe src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&zoom=7&overlay=radar&product=radar&lat=39.4&lon=-0.1" loading="lazy"></iframe>
-      <p style="text-align: center; margin-top: 10px; font-size: 0.8em; opacity: 0.7;">Font: Windy</p>
-    </div>
-
-    <div class="column">
-      <h2>Emergències</h2>
+      <h2>Emergències 112</h2>
       <iframe src="https://wirenext.github.io/EmergenciasCV/" loading="lazy"></iframe>
-      <p style="text-align: center; margin-top: 10px; font-size: 0.8em; opacity: 0.7;">Font: 112CV</p>
     </div>
   </main>
-
-  <footer>
-    <p>© 2025 Meteorologia Comunitat Valenciana — Desenvolupat per WireNext</p>
-  </footer>
 
   <script src="js/script.js"></script>
 </body>

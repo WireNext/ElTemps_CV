@@ -8,7 +8,7 @@
   <link rel="icon" href="multimedia/logo.png">
 </head>
 <body>
-  <header><h1>El Temps al teu poble</h1></header>
+  <header><h1>Cerca el teu municipi</h1></header>
 
   <nav>
     <a href="index.html">🏠 Inici</a>
@@ -20,49 +20,50 @@
     <button id="theme-toggle">🌓 Mode</button>
   </nav>
 
-  <main class="container" style="display: block; text-align: center;">
-    <h2>Consulta el teu municipi</h2>
-    <div id="buscador-container">
-      <input type="text" id="buscador" placeholder="Escriu el teu poble..." list="municipios">
+  <main class="container" style="display: block; text-align: center; max-width: 900px;">
+    <div id="buscador-container" style="margin-bottom: 30px;">
+      <input type="text" id="buscador-input" placeholder="Ex: València, Alacant, Morella..." list="municipios" style="padding: 12px; width: 60%; border-radius: 10px; border: 1px solid #ccc;">
       <datalist id="municipios"></datalist>
-      <button onclick="executarCerca()">Cercar</button>
+      <button onclick="realizarBusqueda()" style="padding: 12px 20px; border-radius: 10px; background: var(--accent); color: white; border: none; cursor: pointer;">Cercar</button>
     </div>
+
     <div id="resultado-tiempo"></div>
   </main>
 
   <script src="js/script.js"></script>
   <script>
-    // Lógica específica de la página (Cargar lista y disparar búsqueda)
-    async function carregarMunicipis() {
+    // Cargar municipios desde JSON
+    async function init() {
         const res = await fetch("municipis.json");
-        const dades = await res.json();
-        const list = document.getElementById("municipios");
-        dades.municipis.forEach(m => {
-            const opt = document.createElement("option");
-            opt.value = m;
-            list.appendChild(opt);
+        const data = await res.json();
+        const dl = document.getElementById("municipios");
+        data.municipis.forEach(m => {
+            const o = document.createElement("option");
+            o.value = m;
+            dl.appendChild(o);
         });
 
-        const guardat = localStorage.getItem("ultimPobleBuscat");
-        if (guardat) {
-            document.getElementById("buscador").value = guardat;
-            executarCerca();
+        // Búsqueda automática si hay algo guardado
+        const guardado = localStorage.getItem("ultimPobleBuscat");
+        if (guardado) {
+            document.getElementById("buscador-input").value = guardado;
+            realizarBusqueda();
         }
     }
 
-    function executarCerca() {
-        const poble = document.getElementById("buscador").value.trim();
-        if (poble) {
-            localStorage.setItem("ultimPobleBuscat", poble);
-            buscarTiempo(poble, "resultado-tiempo");
+    function realizarBusqueda() {
+        const p = document.getElementById("buscador-input").value.trim();
+        if (p) {
+            localStorage.setItem("ultimPobleBuscat", p);
+            buscarTiempo(p, "resultado-tiempo");
         }
     }
 
-    document.getElementById("buscador").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") executarCerca();
+    document.getElementById("buscador-input").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") realizarBusqueda();
     });
 
-    carregarMunicipis();
+    init();
   </script>
 </body>
 </html>

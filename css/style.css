@@ -1,310 +1,72 @@
-/* Modo claro (por defecto) */
+/* --- Variables y Reset --- */
 :root {
-  --bg-color: #e9f4ff;
-  --text-color: #023047;
-  --header-bg: linear-gradient(90deg, #0077b6, #00b4d8);
-  --nav-bg: #caf0f8;
-  --nav-hover: #ade8f4;
-  --card-bg: #ffffff;
-  --accent: #00b4d8;
-  --footer-bg: #0077b6;
+    --bg: #f4f4f4;
+    --text: #333;
+    --card-bg: #ffffff;
+    --accent: #007bff;
 }
 
-/* Modo oscuro */
 [data-theme="dark"] {
-  --bg-color: #0b132b;
-  --text-color: #f0f4f8;
-  --header-bg: linear-gradient(90deg, #003459, #0077b6);
-  --nav-bg: #1c2541;
-  --nav-hover: #3a506b;
-  --card-bg: #1b263b;
-  --accent: #00b4d8;
-  --footer-bg: #003459;
+    --bg: #1a1a1a;
+    --text: #f4f4f4;
+    --card-bg: #2d2d2d;
+    --accent: #3da9ff;
 }
 
-body {
-  font-family: "Segoe UI", Roboto, sans-serif;
-  margin: 0;
-  background: var(--bg-color);
-  color: var(--text-color);
-  transition: background 0.4s, color 0.4s;
+/* --- Contenedores de Tiempo --- */
+#proximas-horas-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 15px 5px;
+    margin: 15px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
 }
 
-header {
-  background: var(--header-bg);
-  color: white;
-  padding: 1rem 2rem;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--nav-bg);
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-nav a {
-  padding: 1rem;
-  color: var(--text-color);
-  text-decoration: none;
-  font-weight: 600;
-  transition: background 0.3s;
-}
-
-nav a:hover,
-nav a.active {
-  background: var(--nav-hover);
-}
-
-#theme-toggle {
-  border: none;
-  background: var(--accent);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, transform 0.2s;
-}
-
-#theme-toggle:hover {
-  background: #0096c7;
-  transform: scale(1.05);
-}
-
-.container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.column {
-  background: var(--card-bg);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  display: flex;
-  flex-direction: column;
-}
-
-.column h2 {
-  background: var(--accent);
-  color: white;
-  padding: 0.8rem;
-  margin: 0;
-  text-align: center;
-  font-size: 1.2rem;
-}
-
-iframe {
-  flex-grow: 1;
-  width: 100%;
-  height: 700px;
-  border: none;
-}
-
-footer {
-  background: var(--footer-bg);
-  color: white;
-  text-align: center;
-  padding: 1rem;
-  margin-top: 1rem;
-}
-
-@media (max-width: 768px) {
-  iframe {
-    height: 400px;
-  }
-}
-
-#buscador-container {
-  background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  padding: 2rem;
-  max-width: 500px;
-  margin: 2rem auto;
-  text-align: center;
-  transition: background 0.4s, color 0.4s;
-}
-
-#buscador-container input {
-  width: 70%;
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 2px solid var(--accent);
-  outline: none;
-  transition: border 0.3s;
-  color: var(--text-color);
-  background: var(--bg-color);
-}
-
-#buscador-container input:focus {
-  border-color: #0096c7;
-}
-
-#buscador-container button {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 0.8rem 1.2rem;
-  margin-left: 0.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, transform 0.2s;
-}
-
-#buscador-container button:hover {
-  background: #0096c7;
-  transform: scale(1.05);
-}
-
-#resultado-tiempo {
-  margin-top: 2rem;
-  background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  padding: 1.5rem;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-  transition: background 0.4s, color 0.4s;
-}
-
-#resultado-tiempo h3 {
-  color: var(--accent);
-  margin-bottom: 1rem;
-}
-
-#resultado-tiempo {
-    /* Mantenemos el estilo de la tarjeta principal */
-    background: var(--card-bg);
+/* Evitar que las horas se aplasten */
+.hora-item {
+    min-width: 85px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 10px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra un poco más fuerte */
-    padding: 2rem 1.5rem; /* Más espacio */
-    max-width: 320px; /* Reducir un poco el tamaño */
-    margin: 2rem auto;
     text-align: center;
-    transition: background 0.4s, color 0.4s;
-    border-top: 5px solid var(--accent); /* Línea de color para destacar */
+    flex: 0 0 auto; /* Importante para que no se encojan */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-#resultado-tiempo h3 {
-    color: var(--text-color); /* Color del texto normal */
-    margin-bottom: 0.5rem;
-}
+.hora-txt { font-size: 0.85em; font-weight: bold; display: block; margin-bottom: 5px; }
+.hora-icon { font-size: 1.8em; display: block; margin: 5px 0; }
+.hora-temp { font-size: 1.1em; font-weight: bold; color: var(--accent); }
 
-.weather-icon {
-    font-size: 4rem; /* Icono grande */
-    margin: 0.5rem 0;
-    color: var(--accent); /* Color del icono */
-    display: block; /* Aseguramos que esté en su propia línea */
-}
-
-.temperature {
-    font-size: 3rem; /* Temperatura muy destacada */
-    font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.details p {
-    margin: 0.4rem 0;
-    padding: 0.3rem 0;
-    border-bottom: 1px dashed var(--nav-bg); /* Separador sutil */
-}
-
-.details p:last-child {
-    border-bottom: none;
-}
-
-#temps-actual-card {
-  /* Separación del bloque de 7 días */
-  padding-bottom: 2rem; 
-  margin-bottom: 2rem;
-  border-bottom: 2px solid var(--nav-bg);
-}
-
-/* ======== Estilos para la Previsión de 7 Días (Optimizado) ======== */
-
+/* Grid de 7 días */
 #previsio-7dies-container {
-  display: flex;
-  flex-wrap: wrap; /* Permite saltar en móviles */
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 0;
-  max-width: 800px; /* Limita el ancho del contenedor en desktop */
-  margin: 0 auto; /* Centra el contenedor en desktop */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
 }
 
 .previsio-dia {
-  background: var(--nav-bg);
-  border-radius: 8px;
-  padding: 10px 5px; 
-  min-width: 85px; 
-  max-width: 120px; 
-  text-align: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-  /* El flex-basis se calcula en la media query de desktop */
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
 }
 
-.previsio-dia:hover {
-    transform: translateY(-3px);
+/* Estilo para el botón de configuración en la Home */
+.btn-home {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-top: 15px;
+    font-weight: bold;
 }
 
-.dia-setmana {
-  font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 0.9rem;
-}
-
-.previsio-icon {
-  font-size: 2rem;
-  display: block;
-  margin: 5px 0;
-}
-
-.temp-range {
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.max-temp {
-  color: #d62828;
-  font-weight: 600;
-}
-
-.min-temp {
-  color: #0077b6;
-}
-
-
-/* --- Media Query para DESKTOP (pantallas grandes: vista horizontal) --- */
-@media (min-width: 900px) {
-  #previsio-7dies-container {
-    flex-wrap: nowrap; /* 🔥 FUERZA la vista en una sola línea */
-  }
-  
-  .previsio-dia {
-    /* Calcula el ancho para que los 7 días quepan en una fila, restando el espacio del gap */
-    flex-basis: calc(100% / 7 - 10px); 
-    width: auto; 
-    max-width: none;
-    min-width: 0;
-  }
-}
-
-/* Ajuste para móvil: hacer los días más pequeños */
-@media (max-width: 600px) {
-  .previsio-dia {
-    width: 70px; 
-  }
-}
+/* Scrollbar para Chrome/Safari */
+#proximas-horas-container::-webkit-scrollbar { height: 6px; }
+#proximas-horas-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
