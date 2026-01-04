@@ -44,57 +44,58 @@ function renderizar(data, nombre, targetId) {
     const container = document.getElementById(targetId);
     const { current, daily, hourly } = data;
 
-    // 1. Bloque de Tiempo Actual (Igual para ambos)
+    // 1. Info Actual (Limpia)
     let html = `
-        <div style="padding:1.5rem; text-align:center; color:var(--text-color);">
-            <h2 style="color:var(--accent); margin-bottom:10px;">${nombre}</h2>
-            <div style="font-size:4rem; margin:10px 0;">${obtenerIcono(current.weather_code)}</div>
-            <div style="font-size:3rem; font-weight:bold; color:var(--accent);">${Math.round(current.temperature_2m)}°C</div>
+        <div class="tiempo-actual-wrapper">
+            <h2>${nombre}</h2>
+            <div class="icono-grande">${obtenerIcono(current.weather_code)}</div>
+            <div class="temperatura-principal">${Math.round(current.temperature_2m)}°C</div>
             <p>Sensació: <b>${Math.round(current.apparent_temperature)}°C</b> | Vent: <b>${Math.round(current.wind_speed_10m)}km/h</b></p>
         </div>`;
 
-    // 2. Previsión para la HOME (Versión reducida horizontal)
+    // 2. HOME: Previsión reducida
     if (targetId === "resultado-tiempo-home") {
-        html += `<div style="display:flex; justify-content:center; gap:15px; padding:15px; border-top:1px solid var(--nav-bg); flex-wrap:wrap;">`;
+        html += `<div class="previsio-container-horizontal">`;
         for (let i = 1; i <= 4; i++) {
             html += `
-                <div style="text-align:center; min-width:70px;">
-                    <span style="font-size:0.8rem; font-weight:bold; text-transform:uppercase;">${new Date(daily.time[i]).toLocaleDateString("ca",{weekday:'short'})}</span>
-                    <div style="font-size:1.5rem; margin:5px 0;">${obtenerIcono(daily.weather_code[i])}</div>
-                    <div style="font-size:0.9rem;">
-                        <span style="color:#d62828;">${Math.round(daily.temperature_2m_max[i])}°</span> 
-                        <span style="opacity:0.6;">${Math.round(daily.temperature_2m_min[i])}°</span>
+                <div class="dia-mini">
+                    <span class="nombre-dia">${new Date(daily.time[i]).toLocaleDateString("ca",{weekday:'short'})}</span>
+                    <div class="icono-mini">${obtenerIcono(daily.weather_code[i])}</div>
+                    <div class="temps-mini">
+                        <span class="max">${Math.round(daily.temperature_2m_max[i])}°</span> 
+                        <span class="min">${Math.round(daily.temperature_2m_min[i])}°</span>
                     </div>
                 </div>`;
         }
         html += `</div>`;
     }
 
-    // 3. Previsión detallada para el BUSCADOR
+    // 3. BUSCADOR: Detalle completo
     if (targetId === "resultado-tiempo") {
-        // Slider 24 horas
-        html += `<h4 style="margin-left:15px; color:var(--text-color);">Pròximes 24h</h4>
+        html += `<h4>Pròximes 24h</h4>
                  <div id="proximas-horas-container">`;
         const horaActual = new Date().getHours();
         for (let i = horaActual; i < horaActual + 24; i++) {
             html += `
                 <div class="hora-item">
-                    <div style="font-size:0.8rem; font-weight:bold;">${i % 24}:00</div>
-                    <div style="font-size:1.5rem; margin:5px 0;">${obtenerIcono(hourly.weather_code[i])}</div>
-                    <div style="color:var(--accent); font-weight:bold;">${Math.round(hourly.temperature_2m[i])}°</div>
+                    <div class="hora-txt">${i % 24}:00</div>
+                    <div class="hora-icon">${obtenerIcono(hourly.weather_code[i])}</div>
+                    <div class="hora-temp">${Math.round(hourly.temperature_2m[i])}°</div>
                 </div>`;
         }
         html += `</div>`;
 
-        // 7 Días completos
-        html += `<h4 style="margin-left:15px; color:var(--text-color);">Previsió 7 Dies</h4>
-                 <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:10px;">`;
+        html += `<h4>Previsió 7 Dies</h4>
+                 <div class="previsio-container-horizontal">`;
         for (let i = 0; i < 7; i++) {
             html += `
                 <div class="previsio-dia">
-                    <b style="text-transform:capitalize;">${new Date(daily.time[i]).toLocaleDateString("ca",{weekday:'short'})}</b><br>
-                    <span style="font-size:1.8rem; display:block; margin:5px 0;">${obtenerIcono(daily.weather_code[i])}</span>
-                    <small><b>${Math.round(daily.temperature_2m_max[i])}°</b> / ${Math.round(daily.temperature_2m_min[i])}°</small>
+                    <b class="caps">${new Date(daily.time[i]).toLocaleDateString("ca",{weekday:'short'})}</b>
+                    <span class="icono-lista">${obtenerIcono(daily.weather_code[i])}</span>
+                    <div class="rango-lista">
+                        <span class="max">${Math.round(daily.temperature_2m_max[i])}°</span> / 
+                        <span>${Math.round(daily.temperature_2m_min[i])}°</span>
+                    </div>
                 </div>`;
         }
         html += `</div>`;

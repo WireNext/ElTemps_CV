@@ -21,6 +21,7 @@
   --footer-bg: #003459;
 }
 
+/* --- BASE --- */
 body {
   font-family: "Segoe UI", Roboto, sans-serif;
   margin: 0;
@@ -29,11 +30,11 @@ body {
   transition: background 0.4s, color 0.4s;
 }
 
-/* --- BOTÓN THEME (Arreglado) --- */
+/* --- BOTÓN THEME --- */
 #theme-toggle {
   border: none;
   background: var(--accent);
-  color: white !important; /* Forzamos blanco para que se vea */
+  color: white !important;
   padding: 0.6rem 1.2rem;
   border-radius: 20px;
   cursor: pointer;
@@ -45,6 +46,7 @@ body {
 
 #theme-toggle:hover { transform: scale(1.05); }
 
+/* --- HEADER Y NAV --- */
 header {
   background: var(--header-bg);
   color: white;
@@ -67,6 +69,7 @@ nav a {
   font-weight: 600;
 }
 
+/* --- GRID Y COLUMNAS --- */
 .container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -85,17 +88,45 @@ nav a {
   flex-direction: column;
 }
 
-/* Forzar que cualquier texto inyectado por JS se vea */
-#resultado-tiempo-home, #resultado-tiempo {
-  color: var(--text-color) !important;
-}
-
 .column h2 {
   background: var(--accent);
   color: white;
   padding: 0.8rem;
   margin: 0;
   text-align: center;
+}
+
+/* --- ESTILOS DINÁMICOS (TIEMPO) --- */
+#resultado-tiempo-home, #resultado-tiempo {
+  color: var(--text-color) !important;
+}
+
+/* Para que el título dentro de la tarjeta no tenga fondo azul repetido */
+#resultado-tiempo-home h2, #resultado-tiempo h2 {
+  background: transparent !important;
+  color: var(--accent) !important;
+  padding: 1rem 0 0 0;
+}
+
+/* Contenedor de días en la Home */
+.previsio-home-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  border-top: 1px solid var(--nav-bg);
+  flex-wrap: wrap;
+}
+
+.previsio-dia {
+  background: var(--nav-bg);
+  color: var(--text-color);
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 80px;
+  flex: 1;
+  max-width: 100px;
 }
 
 /* Slider 24h */
@@ -119,29 +150,15 @@ nav a {
   flex: 0 0 auto;
 }
 
+/* --- FOOTER E IFRAMES --- */
 footer {
   background: var(--footer-bg);
   color: white;
   text-align: center;
   padding: 1.5rem;
   margin-top: 2rem;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
 }
 
-footer p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-}
-
-/* Opcional: si tienes enlaces en el footer */
-footer a {
-  color: var(--nav-bg);
-  text-decoration: none;
-  font-weight: bold;
-}
-
-footer a:hover {
-  text-decoration: underline;
-}
+footer a { color: var(--nav-bg); font-weight: bold; text-decoration: none; }
 
 iframe { width: 100%; height: 600px; border: none; }
