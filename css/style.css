@@ -1,72 +1,136 @@
-/* --- Variables y Reset --- */
+/* Tu Estilo Base */
 :root {
-    --bg: #f4f4f4;
-    --text: #333;
-    --card-bg: #ffffff;
-    --accent: #007bff;
+  --bg-color: #e9f4ff;
+  --text-color: #023047;
+  --header-bg: linear-gradient(90deg, #0077b6, #00b4d8);
+  --nav-bg: #caf0f8;
+  --nav-hover: #ade8f4;
+  --card-bg: #ffffff;
+  --accent: #00b4d8;
+  --footer-bg: #0077b6;
 }
 
 [data-theme="dark"] {
-    --bg: #1a1a1a;
-    --text: #f4f4f4;
-    --card-bg: #2d2d2d;
-    --accent: #3da9ff;
+  --bg-color: #0b132b;
+  --text-color: #f0f4f8;
+  --header-bg: linear-gradient(90deg, #003459, #0077b6);
+  --nav-bg: #1c2541;
+  --nav-hover: #3a506b;
+  --card-bg: #1b263b;
+  --accent: #00b4d8;
+  --footer-bg: #003459;
 }
 
-/* --- Contenedores de Tiempo --- */
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.4s, color 0.4s;
+}
+
+header {
+  background: var(--header-bg);
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--nav-bg);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+nav a {
+  padding: 1rem;
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+nav a:hover, nav a.active { background: var(--nav-hover); }
+
+#theme-toggle {
+  border: none;
+  background: var(--accent);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.column {
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.column h2 {
+  background: var(--accent);
+  color: white;
+  padding: 0.8rem;
+  margin: 0;
+  text-align: center;
+}
+
+iframe { flex-grow: 1; width: 100%; height: 700px; border: none; }
+
+/* NUEVOS ESTILOS PARA LAS 24 HORAS (Adaptados a tu estilo) */
 #proximas-horas-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 12px;
-    padding: 15px 5px;
-    margin: 15px 0;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent) transparent;
-    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 15px 5px;
+  margin: 15px 0;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Evitar que las horas se aplasten */
 .hora-item {
-    min-width: 85px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px 10px;
-    border-radius: 12px;
-    text-align: center;
-    flex: 0 0 auto; /* Importante para que no se encojan */
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 80px;
+  background: var(--nav-bg); /* Usamos tu color de navegación */
+  padding: 12px 8px;
+  border-radius: 12px;
+  text-align: center;
+  flex: 0 0 auto;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-.hora-txt { font-size: 0.85em; font-weight: bold; display: block; margin-bottom: 5px; }
-.hora-icon { font-size: 1.8em; display: block; margin: 5px 0; }
-.hora-temp { font-size: 1.1em; font-weight: bold; color: var(--accent); }
+.hora-temp { font-weight: bold; color: var(--accent); }
 
-/* Grid de 7 días */
+/* ESTILOS 7 DÍAS */
 #previsio-7dies-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-    gap: 12px;
-    margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
 .previsio-dia {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
+  background: var(--nav-bg);
+  border-radius: 8px;
+  padding: 10px 5px;
+  min-width: 85px;
+  text-align: center;
 }
 
-/* Estilo para el botón de configuración en la Home */
-.btn-home {
-    display: inline-block;
-    background: var(--accent);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    text-decoration: none;
-    margin-top: 15px;
-    font-weight: bold;
-}
+.max-temp { color: #d62828; font-weight: 600; }
+.min-temp { color: #0077b6; }
 
-/* Scrollbar para Chrome/Safari */
-#proximas-horas-container::-webkit-scrollbar { height: 6px; }
-#proximas-horas-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+footer { background: var(--footer-bg); color: white; text-align: center; padding: 1rem; margin-top: 1rem; }
