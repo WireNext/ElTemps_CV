@@ -6,8 +6,7 @@
   <title>Meteo Comunitat Valenciana</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="multimedia/logo.png">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8789822435662410"
-     crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8789822435662410" crossorigin="anonymous"></script>
 </head>
 <body>
   <header>
@@ -25,48 +24,36 @@
   </nav>
 
   <main class="container">
+    
+    <div id="tiempo-home-container" style="display: none; width: 100%; grid-column: 1 / -1; margin-bottom: 20px;">
+      <div class="column" style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px;">
+        <div id="resultado-tiempo-home"></div>
+        <p style="text-align: center; margin-top: 10px;">
+          <a href="buscador.html" style="text-decoration: none; font-size: 0.9em; color: var(--accent);">⚙️ Canviar municipi</a>
+        </p>
+      </div>
+    </div>
+
     <div class="column">
       <h2>Avisos</h2>
       <iframe src="https://wirenext.github.io/AlertasAemet/" loading="lazy" allowfullscreen></iframe>
-        <p style="text-align: center; margin-top: 10px; font-size: 0.9em; opacity: 0.7;">
-    Dades proporcionades per l'AEMET.
-  </p>
+      <p style="text-align: center; margin-top: 10px; font-size: 0.9em; opacity: 0.7;">Dades proporcionades per l'AEMET.</p>
     </div>
 
-  <div class="column">
+    <div class="column">
       <h2>Radar</h2>
       <iframe 
         src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=7&overlay=radar&product=radar&level=surface&lat=39.411&lon=-0.11&message=true" 
         loading="lazy"
         allowfullscreen>
       </iframe>
-        <p style="text-align: center; margin-top: 10px; font-size: 0.9em; opacity: 0.7;">
-    Dades proporcionades per Windy.com.
-  </p>
+      <p style="text-align: center; margin-top: 10px; font-size: 0.9em; opacity: 0.7;">Dades proporcionades per Windy.com.</p>
     </div>
-<!--    <div class="column">
-
-  <h2>Radar</h2>
-  
-  <iframe 
-    src="https://www.rainviewer.com/map.html?loc=39.5,0.01,7&amp;map=3&amp;opacity=0&amp;layer=radar&amp;v=2&amp;animated=true" 
-    loading="lazy"
-    allowfullscreen
-    style="width: 100%; height: 700px; border: none; border-radius: 12px;"
-  ></iframe>
-
-  <p style="text-align: center; margin-top: 10px; font-size: 0.9em; opacity: 0.7;">
-    Dades proporcionades per RainViewer.
-  </p>
--->
-</div>
 
     <div class="column">
       <h2>Emergències</h2>
       <iframe src="https://wirenext.github.io/EmergenciasCV/" loading="lazy" allowfullscreen></iframe>
-        <p style="text-align: center; margin-top: 10px; font-size: 0.9em; opacity: 0.7;">
-    Dades proporcionades per 112CV.
-  </p>
+      <p style="text-align: center; margin-top: 10px; font-size: 0.9em; opacity: 0.7;">Dades proporcionades per 112CV.</p>
     </div>
 
   </main>
