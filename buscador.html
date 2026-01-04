@@ -6,39 +6,9 @@
   <title>El Temps al teu poble</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="multimedia/logo.png">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8789822435662410"
-     crossorigin="anonymous"></script>
-  <style>
-    #proximas-horas-container {
-      display: flex;
-      overflow-x: auto;
-      gap: 15px;
-      padding: 15px 5px;
-      margin: 20px 0;
-      scrollbar-width: thin;
-      scrollbar-color: var(--accent) transparent;
-      -webkit-overflow-scrolling: touch;
-    }
-    .hora-item {
-      min-width: 75px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 12px;
-      border-radius: 12px;
-      text-align: center;
-      flex-shrink: 0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .hora-txt { font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 5px; }
-    .hora-icon { font-size: 1.5em; display: block; margin: 5px 0; }
-    .hora-temp { font-size: 1.1em; font-weight: bold; color: var(--accent); }
-    #proximas-horas-container::-webkit-scrollbar { height: 6px; }
-    #proximas-horas-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-  </style>
 </head>
 <body>
-  <header>
-    <h1>El Temps al teu poble</h1>
-  </header>
+  <header><h1>El Temps al teu poble</h1></header>
 
   <nav>
     <a href="index.html">🏠 Inici</a>
@@ -47,191 +17,52 @@
     <a href="radar.html">🌧️ Radar</a>
     <a href="transit.html">🚗 Trànsit</a>
     <a href="buscador.html">🔍 El teu poble</a>
-    <button id="theme-toggle" aria-label="Canvia el mode">🌓 Mode</button>
+    <button id="theme-toggle">🌓 Mode</button>
   </nav>
 
   <main class="container" style="display: block; text-align: center;">
-    <h2>Consulta el temps al teu municipi</h2>
-
+    <h2>Consulta el teu municipi</h2>
     <div id="buscador-container">
-      <input 
-        type="text" 
-        id="buscador" 
-        placeholder="Escriu el teu poble..." 
-        list="municipios" 
-      >
+      <input type="text" id="buscador" placeholder="Escriu el teu poble..." list="municipios">
       <datalist id="municipios"></datalist>
-      <button onclick="buscarTiempo()">Cercar</button>
+      <button onclick="executarCerca()">Cercar</button>
     </div>
-
     <div id="resultado-tiempo"></div>
   </main>
 
-  <footer>
-    <p>© 2025 Meteorologia Comunitat Valenciana — Desenvolupat per WireNext</p>
-  </footer>
-
-  <script>
-  document.getElementById("buscador").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      buscarTiempo();
-    }
-  });
-
-  function obtenerIcono(code) {
-    if (code >= 0 && code <= 1) return "☀️"; 
-    if (code >= 2 && code <= 3) return "🌤️"; 
-    if (code >= 45 && code <= 48) return "🌫️"; 
-    if ((code >= 51 && code <= 55) || (code >= 61 && code <= 65) || (code >= 80 && code <= 82)) return "🌧️"; 
-    if ((code >= 71 && code <= 75) || (code >= 85 && code <= 86)) return "❄️"; 
-    if (code >= 95 && code <= 99) return "🌩️"; 
-    return "❓"; 
-  }
-
-  function obtenerDiaSemana(dateString) {
-    const date = new Date(dateString);
-    const avui = new Date();
-    if (date.toDateString() === avui.toDateString()) return "Avui";
-    const options = { weekday: 'short', day: 'numeric' };
-    return date.toLocaleDateString("ca-ES", options);
-  }
-
-  async function carregarMunicipis() {
-    try {
-      const resposta = await fetch("municipis.json");
-      const dades = await resposta.json();
-      const datalist = document.getElementById("municipios");
-      dades.municipis.forEach(m => {
-        const option = document.createElement("option");
-        option.value = m;
-        datalist.appendChild(option);
-      });
-      
-      // DESPRÉS DE CARREGAR MUNICIPIS, comprovem si n'hi ha un guardat en caché
-      const pobleGuardat = localStorage.getItem("ultimPobleBuscat");
-      if (pobleGuardat) {
-        document.getElementById("buscador").value = pobleGuardat;
-        buscarTiempo(); // Cerca automàtica
-      }
-    } catch (e) {
-      console.error("No s'ha pogut carregar la llista de municipis:", e);
-    }
-  }
-
-  async function buscarTiempo() {
-    const poble = document.getElementById("buscador").value.trim();
-    const resultat = document.getElementById("resultado-tiempo");
-
-    if (!poble) {
-      resultat.innerHTML = "<p>⚠️ Escriu un municipi per continuar.</p>";
-      return;
-    }
-
-    resultat.innerHTML = "⏳ Cercant dades meteorològiques...";
-
-    try {
-      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=5&language=ca`);
-      const geoData = await geoRes.json();
-
-      if (!geoData.results || geoData.results.length === 0) {
-        resultat.innerHTML = "❌ No s'ha trobat el municipi.";
-        return;
-      }
-
-      const m = geoData.results.find(r => r.country_code === 'ES') || geoData.results[0];
-      
-      // GUARDAR EN CACHÉ: Guardem el nom del municipi trobat amb èxit
-      localStorage.setItem("ultimPobleBuscat", m.name);
-      
-      consultarMeteo(m.latitude, m.longitude, m.name);
-
-    } catch (error) {
-      resultat.innerHTML = "⚠️ Error en la cerca.";
-    }
-  }
-
-  async function consultarMeteo(lat, lon, nombre) {
-    const resultat = document.getElementById("resultado-tiempo");
-    try {
-      const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto`;
-      const meteoRes = await fetch(meteoUrl);
-      const meteoData = await meteoRes.json();
-
-      const current = meteoData.current;
-      const hourly = meteoData.hourly;
-      const daily = meteoData.daily;
-
-      let htmlResultat = `<h3>${nombre}</h3>`;
-      
-      htmlResultat += `
-        <h4>Temps Actual</h4>
-        <div id="temps-actual-card">
-            <span class="weather-icon">${obtenerIcono(current.weather_code)}</span>
-            <span class="temperature">${Math.round(current.temperature_2m)} °C</span>
-            <div class="details">
-                <p>🌡️ Sensació: <strong>${Math.round(current.apparent_temperature)} °C</strong></p>
-                <p>💧 Humitat: <strong>${current.relative_humidity_2m}%</strong></p>
-                <p>☀️ Índex UV: <strong>${Math.round(daily.uv_index_max[0])}</strong></p>
-                <p>💨 Vent: <strong>${Math.round(current.wind_speed_10m)} km/h</strong></p>
-            </div>
-        </div>
-      `;
-
-      htmlResultat += `<h4>Pròximes 24 hores</h4><div id="proximas-horas-container">`;
-      
-      const ara = new Date();
-      const horaActual = ara.getHours();
-      
-      for (let i = horaActual; i < horaActual + 24; i++) {
-        const hData = new Date(hourly.time[i]);
-        const horaTitol = hData.getHours() + ":00";
-        const iconaH = obtenerIcono(hourly.weather_code[i]);
-        const tempH = Math.round(hourly.temperature_2m[i]);
-
-        htmlResultat += `
-          <div class="hora-item">
-            <span class="hora-txt">${horaTitol}</span>
-            <span class="hora-icon">${iconaH}</span>
-            <span class="hora-temp">${tempH}°</span>
-          </div>
-        `;
-      }
-      htmlResultat += `</div>`;
-
-      htmlResultat += `
-        <h4>Previsió 7 Dies</h4>
-        <div id="previsio-7dies-container">
-      `;
-
-      for (let i = 0; i < 7; i++) {
-        const dia = obtenerDiaSemana(daily.time[i]);
-        const iconoDia = obtenerIcono(daily.weather_code[i]);
-        const probPluja = daily.precipitation_probability_max[i];
-        
-        htmlResultat += `
-          <div class="previsio-dia">
-            <p class="dia-setmana">${dia}</p>
-            <span class="previsio-icon">${iconoDia}</span>
-            <p class="temp-range">
-              <span class="max-temp">${Math.round(daily.temperature_2m_max[i])}°</span> <br> 
-              <span class="min-temp">${Math.round(daily.temperature_2m_min[i])}°</span>
-            </p>
-            <p style="font-size: 0.75rem; margin-top: 5px; color: var(--accent);">💧 ${probPluja}%</p>
-          </div>
-        `;
-      }
-
-      htmlResultat += `</div>`; 
-      resultat.innerHTML = htmlResultat;
-
-    } catch (e) {
-      resultat.innerHTML = "⚠️ Error en carregar el temps.";
-    }
-  }
-
-  carregarMunicipis();
-  </script>
-
   <script src="js/script.js"></script>
+  <script>
+    // Lógica específica de la página (Cargar lista y disparar búsqueda)
+    async function carregarMunicipis() {
+        const res = await fetch("municipis.json");
+        const dades = await res.json();
+        const list = document.getElementById("municipios");
+        dades.municipis.forEach(m => {
+            const opt = document.createElement("option");
+            opt.value = m;
+            list.appendChild(opt);
+        });
+
+        const guardat = localStorage.getItem("ultimPobleBuscat");
+        if (guardat) {
+            document.getElementById("buscador").value = guardat;
+            executarCerca();
+        }
+    }
+
+    function executarCerca() {
+        const poble = document.getElementById("buscador").value.trim();
+        if (poble) {
+            localStorage.setItem("ultimPobleBuscat", poble);
+            buscarTiempo(poble, "resultado-tiempo");
+        }
+    }
+
+    document.getElementById("buscador").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") executarCerca();
+    });
+
+    carregarMunicipis();
+  </script>
 </body>
 </html>
