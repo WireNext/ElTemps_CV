@@ -44,47 +44,33 @@ function renderizar(data, nombre, targetId) {
     const container = document.getElementById(targetId);
     const { current, daily, hourly } = data;
 
-    // BLOQUE SUPERIOR (Común)
+    // 1. BLOQUE SUPERIOR: Info Actual (Se ve igual en ambos sitios)
     let html = `
         <div style="padding:1.5rem; text-align:center;">
             <h2 style="background:transparent !important; color:var(--accent) !important; margin:0;">${nombre}</h2>
             <div style="font-size:4rem; margin:10px 0;">${obtenerIcono(current.weather_code)}</div>
-            <div style="font-size:2.5rem; font-weight:bold; color:var(--accent);">${Math.round(current.temperature_2m)}°C</div>
-            <p>Sensació: ${Math.round(current.apparent_temperature)}°C | Vent: ${Math.round(current.wind_speed_10m)}km/h</p>
+            <div style="font-size:3rem; font-weight:bold; color:var(--accent);">${Math.round(current.temperature_2m)}°C</div>
+            <p>Sensació: <b>${Math.round(current.apparent_temperature)}°C</b> | Vent: <b>${Math.round(current.wind_speed_10m)}km/h</b></p>
         </div>`;
 
-    // LÓGICA PARA LA HOME (index.html)
-    if (targetId === "resultado-tiempo-home") {
-        html += `<div class="previsio-horizontal">`;
-        // Solo 4 días en horizontal
-        for (let i = 1; i <= 4; i++) {
-            html += `
-                <div class="dia-caja">
-                    <div style="font-size:0.8rem; font-weight:bold; text-transform:uppercase;">${new Date(daily.time[i]).toLocaleDateString("ca",{weekday:'short'})}</div>
-                    <div style="font-size:1.5rem; margin:5px 0;">${obtenerIcono(daily.weather_code[i])}</div>
-                    <div style="font-weight:bold;">${Math.round(daily.temperature_2m_max[i])}°</div>
-                </div>`;
-        }
-        html += `</div>`;
+    // 2. SLIDER 24 HORAS (Ahora se ve tanto en HOME como en BUSCADOR)
+    html += `<h4 style="margin-left:20px;">Pròximes 24h</h4>
+             <div id="proximas-horas-container">`;
+    
+    const horaActual = new Date().getHours();
+    // Recorremos las próximas 24 horas desde la hora actual
+    for (let i = horaActual; i < horaActual + 24; i++) {
+        html += `
+            <div class="hora-item">
+                <div style="font-size:0.8rem; font-weight:bold;">${i % 24}:00</div>
+                <div style="font-size:1.5rem; margin:5px 0;">${obtenerIcono(hourly.weather_code[i])}</div>
+                <div style="color:var(--accent); font-weight:bold;">${Math.round(hourly.temperature_2m[i])}°</div>
+            </div>`;
     }
+    html += `</div>`;
 
-    // LÓGICA PARA EL BUSCADOR (buscador.html)
+    // 3. PREVISIÓN 7 DÍAS (Solo se ve en el BUSCADOR para no recargar la Home)
     if (targetId === "resultado-tiempo") {
-        // 1. Slider 24 Horas
-        html += `<h4 style="margin-left:20px;">Pròximes 24h</h4>
-                 <div id="proximas-horas-container">`;
-        const horaActual = new Date().getHours();
-        for (let i = horaActual; i < horaActual + 24; i++) {
-            html += `
-                <div class="hora-item">
-                    <div style="font-size:0.8rem;">${i % 24}:00</div>
-                    <div style="font-size:1.5rem;">${obtenerIcono(hourly.weather_code[i])}</div>
-                    <div style="color:var(--accent); font-weight:bold;">${Math.round(hourly.temperature_2m[i])}°</div>
-                </div>`;
-        }
-        html += `</div>`;
-
-        // 2. 7 Días en Grid (Para que ocupe bien el espacio)
         html += `<h4 style="margin-left:20px;">Previsió 7 Dies</h4>
                  <div class="previsio-grid">`;
         for (let i = 0; i < 7; i++) {
