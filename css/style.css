@@ -30,23 +30,6 @@ body {
   transition: background 0.4s, color 0.4s;
 }
 
-/* --- BOTÓN THEME --- */
-#theme-toggle {
-  border: none;
-  background: var(--accent);
-  color: white !important;
-  padding: 0.6rem 1.2rem;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  margin: 0.5rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
-}
-
-#theme-toggle:hover { transform: scale(1.05); }
-
-/* --- HEADER Y NAV --- */
 header {
   background: var(--header-bg);
   color: white;
@@ -69,6 +52,18 @@ nav a {
   font-weight: 600;
 }
 
+#theme-toggle {
+  border: none;
+  background: var(--accent);
+  color: white !important;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 /* --- GRID Y COLUMNAS --- */
 .container {
   display: grid;
@@ -84,8 +79,6 @@ nav a {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  display: flex;
-  flex-direction: column;
 }
 
 .column h2 {
@@ -96,61 +89,67 @@ nav a {
   text-align: center;
 }
 
-/* --- ESTILOS DINÁMICOS (TIEMPO) --- */
+/* --- ESTILOS DEL TIEMPO (JS) --- */
 #resultado-tiempo-home, #resultado-tiempo {
   color: var(--text-color) !important;
 }
 
-/* Para que el título dentro de la tarjeta no tenga fondo azul repetido */
+/* Quitar franja azul a los títulos inyectados */
 #resultado-tiempo-home h2, #resultado-tiempo h2 {
   background: transparent !important;
   color: var(--accent) !important;
-  padding: 1rem 0 0 0;
+  padding-top: 1rem;
 }
 
-/* Contenedor de días en la Home */
-.previsio-home-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 20px;
-  border-top: 1px solid var(--nav-bg);
-  flex-wrap: wrap;
+/* CONTENEDORES DE DÍAS */
+.previsio-horizontal {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    overflow-x: auto;
+    border-top: 1px solid var(--nav-bg);
 }
 
-.previsio-dia {
-  background: var(--nav-bg);
-  color: var(--text-color);
-  padding: 10px;
-  border-radius: 10px;
-  text-align: center;
-  min-width: 80px;
-  flex: 1;
-  max-width: 100px;
+.previsio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    padding: 15px;
 }
 
-/* Slider 24h */
+.dia-caja {
+    background: var(--nav-bg);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 85px;
+}
+
+/* SLIDER 24 HORAS */
 #proximas-horas-container {
-  display: flex;
-  overflow-x: auto;
-  gap: 12px;
-  padding: 15px;
-  background: var(--nav-bg);
-  border-radius: 12px;
-  margin: 15px 10px;
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 15px;
+    background: var(--nav-bg);
+    border-radius: 12px;
+    margin: 10px 15px;
 }
 
 .hora-item {
-  min-width: 80px;
-  background: var(--card-bg);
-  color: var(--text-color);
-  padding: 12px 8px;
-  border-radius: 12px;
-  text-align: center;
-  flex: 0 0 auto;
+    min-width: 70px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    flex: 0 0 auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* --- FOOTER E IFRAMES --- */
+/* --- EXTRAS --- */
 footer {
   background: var(--footer-bg);
   color: white;
@@ -162,3 +161,4 @@ footer {
 footer a { color: var(--nav-bg); font-weight: bold; text-decoration: none; }
 
 iframe { width: 100%; height: 600px; border: none; }
+h4 { margin-left: 20px; margin-bottom: 5px; color: var(--text-color); }
